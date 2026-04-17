@@ -10,6 +10,7 @@
   },
   "scripts": {
     "scrape": "tsx src/scraper/cli.ts",
+    "diagnose": "tsx src/scraper/diagnose.ts",
     "build": "esbuild src/web/app.ts --bundle --format=esm --target=es2022 --outfile=public/app.js --sourcemap",
     "serve": "npx --yes serve public",
     "test": "vitest run --passWithNoTests",
