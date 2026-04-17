@@ -144,6 +144,23 @@ function buildVariations(config: AppConfig): Variation[] {
   return variations;
 }
 
+function describeError(err: unknown): string {
+  if (!(err instanceof Error)) return String(err);
+  const parts: string[] = [err.message];
+  let cause: unknown = (err as { cause?: unknown }).cause;
+  while (cause) {
+    if (cause instanceof Error) {
+      const code = (cause as { code?: string }).code;
+      parts.push(`cause: ${code ? code + " " : ""}${cause.message}`);
+      cause = (cause as { cause?: unknown }).cause;
+    } else {
+      parts.push(`cause: ${String(cause)}`);
+      break;
+    }
+  }
+  return parts.join(" | ");
+}
+
 async function fetchWithRetry(
   url: string,
 ): Promise<{ status: number; html: string; contentLength: number | null }> {
@@ -171,9 +188,7 @@ async function fetchWithRetry(
       await sleep(2000 * 2 ** (attempt - 1));
     }
   }
-  throw new Error(
-    `fetch failed: ${lastErr instanceof Error ? lastErr.message : String(lastErr)}`,
-  );
+  throw new Error(`fetch failed: ${describeError(lastErr)}`);
 }
 
 function analyseHtml(html: string, config: AppConfig): Omit<Result, "id" | "description" | "url" | "status" | "contentLength" | "error"> {
@@ -261,12 +276,16 @@ async function runVariation(
   }
 }
 
-function renderMarkdown(results: Result[]): string {
+function renderMarkdown(results: Result[], preflightLine?: string): string {
   const lines: string[] = [];
   lines.push(`# FA scraper diagnostic report`);
   lines.push("");
   lines.push(`Generated: ${new Date().toISOString()}`);
   lines.push("");
+  if (preflightLine) {
+    lines.push(`**Preflight:** ${preflightLine}`);
+    lines.push("");
+  }
   lines.push(`## Summary table`);
   lines.push("");
   lines.push(
@@ -363,9 +382,25 @@ function renderMarkdown(results: Result[]): string {
   return lines.join("\n") + "\n";
 }
 
+async function preflight(): Promise<string> {
+  const target = "https://fulltime.thefa.com/";
+  try {
+    const res = await fetch(target, {
+      headers: { "User-Agent": USER_AGENT, Accept: "text/html" },
+    });
+    const body = await res.text();
+    return `Preflight GET ${target} -> HTTP ${res.status} (${Buffer.byteLength(body, "utf8")} bytes)`;
+  } catch (err) {
+    return `Preflight GET ${target} -> ERROR: ${describeError(err)}`;
+  }
+}
+
 async function main(): Promise<void> {
   const config = loadDefaultConfig();
   await fs.mkdir(OUT_DIR, { recursive: true });
+  const preflightLine = await preflight();
+  console.log(preflightLine);
+  await fs.writeFile(path.join(OUT_DIR, "preflight.txt"), preflightLine + "\n", "utf8");
   const variations = buildVariations(config);
   const results: Result[] = [];
   for (let i = 0; i < variations.length; i++) {
@@ -375,7 +410,7 @@ async function main(): Promise<void> {
     results.push(result);
     if (i < variations.length - 1) await sleep(POLITE_PAUSE_MS);
   }
-  const markdown = renderMarkdown(results);
+  const markdown = renderMarkdown(results, preflightLine);
   await fs.writeFile(path.join(OUT_DIR, "report.md"), markdown, "utf8");
   await fs.writeFile(
     path.join(OUT_DIR, "report.json"),
