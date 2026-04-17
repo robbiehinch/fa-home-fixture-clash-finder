@@ -1,0 +1,17 @@
+{
+  "club": { "id": "175732888", "name": "Baldock Town Youth" },
+  "season": "17031412",
+  "pitchGroups": [
+    {
+      "name": "Mini-soccer (U7–U10)",
+      "ageGroups": ["U7", "U8", "U9", "U10"],
+      "dayOfWeek": "Saturday",
+      "sessions": [
+        { "name": "Early", "start": "09:00", "end": "10:30" },
+        { "name": "Late", "start": "10:45", "end": "12:15" }
+      ],
+      "pitches": ["Pitch 1", "Pitch 2", "Pitch 3"]
+    }
+  ],
+  "dateRange": { "from": "today", "to": "lastFixture", "includePast": false }
+}
