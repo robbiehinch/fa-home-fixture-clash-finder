@@ -1,4 +1,4 @@
-const DEFAULT_AGE_REGEX = /\bU(\d{1,2})\b/i;
+const DEFAULT_AGE_REGEX = /\b(?:U|Under\s+)(\d{1,2})\b/i;
 
 export function extractAgeGroup(
   teamName: string,

@@ -18,7 +18,7 @@ describe("buildFixturesUrl", () => {
     expect(url).toContain("selectedSeason=17031412");
     expect(url).toContain("selectedClub=175732888");
     expect(url).toContain("selectedRelatedFixtureOption=3");
-    expect(url).toContain("itemsPerPage=250");
+    expect(url).toContain("itemsPerPage=100");
   });
 });
 
