@@ -12,8 +12,15 @@ describe("extractAgeGroup", () => {
   });
 
   it.each([
+    ["Under 8 Hitchin", "U8"],
+    ["Under 10 Damson", "U10"],
+    ["U11 Cherry", "U11"],
+  ])("also matches 'Under N' competition-style %s -> %s", (input, expected) => {
+    expect(extractAgeGroup(input)).toBe(expected);
+  });
+
+  it.each([
     "Baldock Town Youth",
-    "Under 8 Hitchin",
     "Cambridge Blues",
     "",
   ])("returns null for %s", (input) => {

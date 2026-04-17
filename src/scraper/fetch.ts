@@ -19,7 +19,7 @@ export type FetchOptions = {
 
 const defaultSleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-export function buildFixturesUrl(config: AppConfig, itemsPerPage = 250): string {
+export function buildFixturesUrl(config: AppConfig, itemsPerPage = 100): string {
   const params = new URLSearchParams({
     selectedSeason: config.season,
     selectedFixtureGroupAgeGroup: "0",
@@ -43,7 +43,7 @@ export async function fetchFixturesPage(
   opts: FetchOptions = {},
 ): Promise<string> {
   const {
-    itemsPerPage = 250,
+    itemsPerPage = 100,
     userAgent = DEFAULT_UA,
     fetchImpl = fetch,
     sleep = defaultSleep,
