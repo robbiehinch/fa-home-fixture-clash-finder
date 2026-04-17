@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   diagnose:
@@ -27,6 +28,39 @@ jobs:
 
       - run: npm run diagnose
         continue-on-error: true
+
+      - name: Publish report to step summary
+        if: always()
+        run: |
+          if [ -f tmp/diagnose/report.md ]; then
+            cat tmp/diagnose/report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No report.md produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Post report as PR comment
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body;
+            try {
+              body = fs.readFileSync('tmp/diagnose/report.md', 'utf8');
+            } catch (err) {
+              body = `Diagnose run failed before producing a report: ${err.message}`;
+            }
+            const MAX = 60000;
+            const trimmed = body.length > MAX
+              ? body.slice(0, MAX) + '\n\n_[report truncated — see workflow artifact `diagnose-report` for full output]_\n'
+              : body;
+            const header = `<!-- diagnose-report -->\n### Diagnose scraper coverage (run ${context.runId})\n\n`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: header + trimmed,
+            });
 
       - uses: actions/upload-artifact@v4
         if: always()
