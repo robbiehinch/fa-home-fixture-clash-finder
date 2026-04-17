@@ -74,3 +74,9 @@ export type FixturesDocument = {
   config: { club: AppConfig["club"]; season: string };
   fixtures: Fixture[];
 };
+
+export type AllocationOverride =
+  | { slot: "unassigned" }
+  | { slot: { session: string; pitch: string } };
+
+export type AllocationOverrides = Record<string, AllocationOverride>;

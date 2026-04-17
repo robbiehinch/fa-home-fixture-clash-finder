@@ -13,5 +13,5 @@
       "pitches": ["Pitch 1", "Pitch 2", "Pitch 3"]
     }
   ],
-  "dateRange": { "from": "today", "to": "lastFixture", "includePast": false }
+  "dateRange": { "from": "today", "to": "+28d", "includePast": true }
 }
