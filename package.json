@@ -1,0 +1,28 @@
+{
+  "name": "fa-home-fixture-clash-finder",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Find booking clashes and draft pitch allocations for home fixtures scraped from The FA Full-Time.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "scrape": "tsx src/scraper/cli.ts",
+    "build": "esbuild src/web/app.ts --bundle --format=esm --target=es2022 --outfile=public/app.js --sourcemap",
+    "serve": "npx --yes serve public",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
