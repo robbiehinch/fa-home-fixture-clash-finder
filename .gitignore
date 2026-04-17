@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+public/app.js
+public/app.js.map
+
+# Scraper debug output
+tmp/
+*.raw.html
+
+# Testing
+coverage/
+.nyc_output/
+
+# Environment / local config
+.env
+.env.local
+.env.*.local
+
+# Editor / OS
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.recommended.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+.cache/
